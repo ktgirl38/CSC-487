@@ -1,0 +1,126 @@
+---
+title: "Homework1"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+date: "2025-09-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+## Question 1
+```{r}
+su <- read.delim("Su_raw_matrix.txt")
+#Find the mean and standard deviation for the Liver_2.CEL column
+m <- mean(su$Liver_2.CEL)
+sd <- sd(su$Liver_2.CEL)
+
+"Mean for Liver_2.CEL"
+m
+"Standard Deviation for Liver_2.CEL"
+sd
+
+cm <- colMeans(su)
+cs <- colSums(su)
+
+"Average for each column"
+cm
+
+"Sum of each column"
+cs
+
+```
+
+## Question 2
+```{r}
+#Generate 2 lists of random values with different standard deviations
+valuesA <- rnorm(10000, mean=0, sd=0.2)
+valuesB <- rnorm(10000, mean=0, sd=0.5)
+
+#Display the lists in histograms (The code is not echoed, but it is the same as in the assignment)
+```
+
+```{r echo=FALSE}
+hist(valuesA, xlim=c(-5,5))
+hist(valuesB, xlim=c(-5,5))
+```
+
+#When sigma is 0.2 the values are more concentrated around the mean and the frequency at the mean is higher. When sigma is 0.5 the values are spread between -2 and 2 and the average frequency is much lower. This difference is because the standard deviation represents how spread out the values are from the mean and a higher standard deviation leads to a more spread  histogram.
+
+## Question 3 (a-e)
+```{r echo=FALSE}
+library(ggplot2)
+
+dat <- data.frame(cond=factor(rep(c("A", "B"), each=200)), rating=c(rnorm(200), rnorm(200, mean=0.8)))
+
+# Overlaid histograms
+ggplot(dat, aes(x=rating, fill=cond)) +
+geom_histogram(binwidth=.5, alpha=.5, position="identity")
+
+# Interleaved histograms
+ggplot(dat, aes(x=rating, fill=cond)) + geom_histogram(binwidth=.5, position="dodge")
+
+# Density plots
+ggplot(dat, aes(x=rating, colour=cond)) + geom_density()
+
+# Density plots with semitransparent fill
+ggplot(dat, aes(x=rating, fill=cond)) + geom_density(alpha=.3)
+```
+
+#Question 3f
+```{r}
+library(ggplot2)
+diabetes <- read.csv("diabetes_train.csv")
+
+#Overlaid Histograms
+ggplot(diabetes, aes(x=mass, fill=class)) + geom_histogram(binwidth=.5, alpha=.5, position="identity")
+
+#Interleaved Histograms
+ggplot(diabetes, aes(x=mass, fill=class)) + geom_histogram(binwidth=.5, position="dodge")
+
+#Density Plots
+ggplot(diabetes,aes(x=mass, colour=class)) + geom_density()
+
+#Density Plots with Semi-Transparent Fill
+ggplot(diabetes,aes(x=mass, fill=class)) + geom_density(alpha=0.3)
+```
+
+#Question 4
+```{r}
+library(tidyr)
+library(dplyr)
+passengers <-read.csv("titanic.csv", header=TRUE)
+
+#Drop rows containing empty values then display the summary of the resulting data frame
+passengers %>% drop_na() %>% summary()
+
+#Display all of the male passengers by passing the dataframe into the filter function
+passengers %>% filter(Sex=="male")
+
+#Display the passengers in descending order based on their fare.
+passengers %>% arrange(desc(Fare))
+
+#Create a new column (FamSize) in the passengers data frame based on the parch and sibsp attributes
+passengers %>% mutate(FamSize=Parch + SibSp)
+
+#Display the average fare of passengers based on their gender and how many of each gender survived
+passengers %>% group_by(Sex) %>% summarise(meanFare = mean(Fare), numSurv=sum(Survived))
+```
+
+#Question 5
+```{r}
+diabetes <- read.csv("diabetes_train.csv")
+
+#Calculate and display the location of the 10th, 30th, 50th, and 60th percentile
+quantile(diabetes$skin, probs=c(0.1, 0.3, 0.5, 0.6))
+```
